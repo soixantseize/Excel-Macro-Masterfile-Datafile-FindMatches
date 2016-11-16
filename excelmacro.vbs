@@ -20,7 +20,7 @@ Sub RunMacro()
     End With
     
     'SPECIFY LOCAL PATH OF MASTERLIST.XLSX FILE
-    masterListLocation = "C:\Users\Herman.Toro\Desktop\Excel-Macro-Example\MasterList.xlsx"
+    masterListLocation = "C:\Users\YourName\Desktop\Excel-Macro-Example\MasterList.xlsx"
                    
     'ASSIGN DATA WORKSHEET
     Set dataWS = ActiveSheet
