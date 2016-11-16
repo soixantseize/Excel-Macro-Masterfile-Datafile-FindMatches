@@ -1,4 +1,4 @@
-# Excel-Macro-Master-Data-Find-Matches
+# Excel-Macro-MasterList-DataList-Find-Matches
 Excel macro for comparing two lists, master and data. For each row of the master list, we will find all matching rows in data list, then add up totals.
 
 ## Installation
