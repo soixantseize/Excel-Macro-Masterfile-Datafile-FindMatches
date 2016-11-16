@@ -51,7 +51,7 @@ Sub RunMacro()
     Dim r As Integer
     If iInMasterRow.Count > 0 Then
         
-        'INITIALIZE EMPLOYEE MISSING VARS
+       'INITIALIZE PERSONS MISSING VARS
         Set PersonsMissing = New Collection
         outputPrintRow = 1
     
