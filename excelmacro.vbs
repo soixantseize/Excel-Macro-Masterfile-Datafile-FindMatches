@@ -6,8 +6,8 @@ Sub RunMacro()
  Dim tempWS, dataWS, outputWS As Worksheet
  Dim countValue, outputPrintRow As Long
  Dim dataWSCol, tempRNG As Variant
- Dim employeeListLocation, lastName, firstName, login As String
- Dim iInEmployeeRow, iInDataListRow, EmployeesMissing As Collection
+ Dim masterListLocation, lastName, firstName, login As String
+ Dim iInMasterRow, iInDataListRow, PersonsMissing As Collection
  Dim x, y, z As Integer
  
 
@@ -19,8 +19,8 @@ Sub RunMacro()
         .EnableEvents = False
     End With
     
-    'SPECIFY PATH OF EMPLOYEE MASTER LIST
-    employeeListLocation = "C:\EmployeeMasterList.xlsx"
+    'SPECIFY LOCAL PATH OF MASTERLIST.XLSX FILE
+    masterListLocation = "C:\Users\Herman.Toro\Desktop\Excel-Macro-Example\MasterList.xlsx"
                    
     'ASSIGN DATA WORKSHEET
     Set dataWS = ActiveSheet
@@ -29,51 +29,51 @@ Sub RunMacro()
     ActiveWorkbook.Worksheets.Add(After:=Worksheets(1)).Name = "output"
     Set outputWS = ActiveWorkbook.Sheets("output")
     
-    'OPEN THE EMPLOYEE LIST
+    'OPEN THE MASTER LIST
     On Error Resume Next
-            Set tempWB = Workbooks.Open(employeeListLocation, True, True)
+            Set tempWB = Workbooks.Open(masterListLocation, True, True)
             Set tempWS = tempWB.Sheets("Sheet1")
             If tempWS Is Nothing Then
                 Call CloseAll
-                MsgBox "Cannot open Employee List file", vbCritical
+            MsgBox "Cannot open Master List file", vbCritical
                 Exit Sub
             End If
     On Error GoTo ErrHandler
     
-    'ONLY COPY ROWS WITH DATA FROM EMPLOYEE LIST TO TEMP RANGE
+    'ONLY COPY ROWS WITH DATA FROM MASTER LIST TO TEMP RANGE
     tempRNG = tempWS.Range(tempWS.Range("A1"), tempWS.Range("A1").End(xlDown)).Cells
     
-    'CREATE COLLECTION OF ROW NUMBERS FROM EMPLOYEE LIST THAT CONTAIN DATA
-    Set iInEmployeeRow = GetEmployeeRows(tempRNG)
+    'CREATE COLLECTION OF ROW NUMBERS FROM MASTER LIST THAT CONTAIN DATA
+    Set iInMasterRow = GetMasterRows(tempRNG)
     Set tempRNG = Nothing
     
-    'ITERATE THROUGH COLLECTION OF EMPLOYEE LIST ROW NUMBERS ONE BY ONE
+    'ITERATE THROUGH COLLECTION OF MASTER LIST ROW NUMBERS ONE BY ONE
     Dim r As Integer
-    If iInEmployeeRow.Count > 0 Then
+    If iInMasterRow.Count > 0 Then
         
         'INITIALIZE EMPLOYEE MISSING VARS
-        Set EmployeesMissing = New Collection
+        Set PersonsMissing = New Collection
         outputPrintRow = 1
     
-        For x = 2 To iInEmployeeRow.Count
+        For x = 2 To iInMasterRow.Count
         
                 lastName = ""
                 firstName = ""
                 login = ""
                               
-                'GET LAST NAME FROM EMPLOYEE LIST ROW
-                lastName = Trim(tempWS.Cells(iInEmployeeRow(x), 1).Value)
+                'GET LAST NAME FROM MASTER LIST ROW
+                lastName = Trim(tempWS.Cells(iInMasterRow(x), 1).Value)
                  
-                'GET FIRST NAME FROM EMPLOYEE LIST ROW
-                firstName = Trim(tempWS.Cells(iInEmployeeRow(x), 2).Value)
+                'GET FIRST NAME FROM MASTER LIST ROW
+                firstName = Trim(tempWS.Cells(iInMasterRow(x), 2).Value)
                                  
-                'GET LOGIN FROM EMPLOYEE LIST ROW
-                login = Trim(tempWS.Cells(iInEmployeeRow(x), 3).Value)
+                'GET LOGIN FROM MASTER LIST ROW
+                login = Trim(tempWS.Cells(iInMasterRow(x), 3).Value)
                                                        
                 'COPY COLUMN B OF DATA LIST SINCE IT CONTAINS LOGIN DATA
                 dataWSCol = Range(dataWS.Range("B1"), dataWS.Range("B1").End(xlDown)).Cells
                 
-                'CREATE COLLECTION OF DATA LIST ROW NUMBERS THAT CONTAIN THE SAME LOGIN AS EMPLOYEE LIST ROW
+                'CREATE COLLECTION OF DATA LIST ROW NUMBERS THAT CONTAIN THE SAME LOGIN AS MASTER LIST ROW
                 Set iInDataListRow = GetMatchingRows(dataWSCol, login)
                 Set dataWSCol = Nothing
                 
@@ -91,37 +91,37 @@ Sub RunMacro()
                     
                     'PRINT NAME AND TOTAL FOR EACH PERSON
                     If (outputPrintRow = 1) Then
-                       outputWS.Cells(outputPrintRow, 1).Value = "EMPLOYEE TOTALS FROM DATALIST"
+                       outputWS.Cells(outputPrintRow, 1).Value = "TOTALS FROM DATALIST"
                        outputPrintRow = outputPrintRow + 1
                     End If
                     
                     outputWS.Cells(outputPrintRow, 1).Value = firstName & Space(2) & lastName & Space(8) & CStr(countValue)
                     outputPrintRow = outputPrintRow + 1
                 Else
-                    'SAVE LIST OF EMPLOYEE'S MISSING FROM DATA LIST
-                    EmployeesMissing.Add firstName & Space(2) & lastName
+                    'SAVE LIST OF PERSONS MISSING FROM DATA LIST
+                    PersonsMissing.Add firstName & Space(2) & lastName
                 End If
                                
                 Set iInDataListRow = Nothing
         
         Next x
         
-        Set iInEmployeeRow = Nothing
+        Set iInMasterRow = Nothing
         
-        'ITERATE THROUGH COLLECTION OF EMPLOYEE'S MISSING FROM DATA LIST
-        For z = 1 To EmployeesMissing.Count
+        'ITERATE THROUGH COLLECTION OF PERSONS MISSING FROM DATA LIST
+        For z = 1 To PersonsMissing.Count
             If (z = 1) Then
                 outputPrintRow = outputPrintRow + 1
-                outputWS.Cells(outputPrintRow, 1).Value = "EMPLOYEE'S MISSING FROM DATA LIST"
+                outputWS.Cells(outputPrintRow, 1).Value = "PERSONS MISSING FROM DATA LIST"
                 outputPrintRow = outputPrintRow + 1
             End If
             
-            'PRINT NAMES OF MISSING EMPLOYEES
-            outputWS.Cells(outputPrintRow, 1).Value = EmployeesMissing.Item(z)
+            'PRINT NAMES OF MISSING PERSONS
+            outputWS.Cells(outputPrintRow, 1).Value = PersonsMissing.Item(z)
             outputPrintRow = outputPrintRow + 1
         Next z
         
-        Set EmployeesMissing = Nothing
+        Set PersonsMissing = Nothing
         
     End If
       
@@ -167,13 +167,13 @@ Dim lb As Long, ub As Long, e As Long
     Next e
 End Function
 
-Function GetEmployeeRows(arr) As Collection
+Function GetMasterRows(arr) As Collection
 Dim lb As Long, ub As Long, e As Long
-    Set GetEmployeeRows = New Collection
+    Set GetMasterRows = New Collection
     lb = LBound(arr)
     ub = UBound(arr)
     For e = lb To ub
-            GetEmployeeRows.Add e
+            GetMasterRows.Add e
     Next e
 End Function
 
