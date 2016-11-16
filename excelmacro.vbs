@@ -135,7 +135,7 @@ Sub RunMacro()
         .EnableEvents = True
     End With
     
-    MsgBox "File Processed Successfully"
+    MsgBox "File processed successfully. Please open sheet labelled output for totals."
     
     Exit Sub
     
