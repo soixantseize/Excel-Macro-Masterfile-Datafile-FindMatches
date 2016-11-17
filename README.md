@@ -12,7 +12,7 @@ You need a macro to extract data from one excel file, while using a second excel
 ### Installation
 1. Create a new folder on your desktop named ExcelMacro
 
-2. Download both excel files from repository, MasterList.xlsx and DataList.xlsx, and drop them into Excel-Macro-Example folder.
+2. Download both excel files from repository, MasterList.xlsx and DataList.xlsx, and drop them into ExcelMacro folder.
 
 3. Open DataList.xlsx file and click Developer tab on the top menu Ribbon
 
