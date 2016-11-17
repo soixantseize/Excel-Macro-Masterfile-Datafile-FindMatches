@@ -77,7 +77,7 @@ Sub RunMacro()
                 Set dataWSCol = Nothing
                 
                 'ITERATE THROUGH COLLECTION OF DATA LIST ROW NUMBERS AND SUM UP VALUES FROM COLUMN C
-                If GetMatchingRows.Count > 0 Then
+                If iInDataListRow.Count > 0 Then
                 
                     countValue = 0
                                
