@@ -22,7 +22,7 @@ You need to extract data from one excel file, while using a second excel file as
 
 6. A Visual Basic Editor Window will pop up. Highlight all text in the Editor Window and delete it.
 
-7. Copy and Paste all text from [excelmacro.vbs](../Excel-Macro-MasterList-DataList-Match-Rows/excelmacro.vbs)
+7. Copy and Paste all text from [excelmacro.vbs](../master/excelmacro.vbs)
 
 8. Goto line 15 and specify your local path for the MasterList.xlsx file
 
