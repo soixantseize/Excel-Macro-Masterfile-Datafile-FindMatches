@@ -12,7 +12,7 @@ Sub RunMacro()
     Dim iInMasterRow, iInDataListRow, PersonsMissing As Collection
     Dim x, y, z As Integer
  
-    Dim masterListLocation As String: masterListLocation = "C:\Users\Herman.Toro\Desktop\Excel-Macro-Example\MasterList.xlsx"
+    Dim masterListLocation As String: masterListLocation = "C:\Users\YourName\Desktop\Excel-Macro-Example\MasterList.xlsx"
      
     With Application
         .ScreenUpdating = False
