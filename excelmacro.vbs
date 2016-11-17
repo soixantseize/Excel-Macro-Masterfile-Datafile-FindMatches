@@ -1,45 +1,44 @@
 Option Explicit
 
 Sub RunMacro()
- 
- Dim tempWB As Workbook, rw As Range
- Dim tempWS, dataWS, outputWS As Worksheet
- Dim countValue, outputPrintRow As Long
- Dim dataWSCol, tempRNG As Variant
- Dim masterListLocation, lastName, firstName, login As String
- Dim iInMasterRow, iInDataListRow, PersonsMissing As Collection
- Dim x, y, z As Integer
- 
 
- On Error GoTo ErrHandler
-    
+    On Error GoTo ErrHandler
+ 
+    Dim tempWB As Workbook, dataWB As Workbook, rw As Range
+    Dim tempWS, dataWS, outputWS As Worksheet
+    Dim countValue, outputPrintRow As Long
+    Dim dataWSCol, tempRNG As Variant
+    Dim lastName, firstName, login As String
+    Dim iInMasterRow, iInDataListRow, PersonsMissing As Collection
+    Dim x, y, z As Integer
+ 
+    Dim masterListLocation As String: masterListLocation = "C:\Users\Herman.Toro\Desktop\Excel-Macro-Example\MasterList.xlsx"
+     
     With Application
         .ScreenUpdating = False
         .DisplayAlerts = False
         .EnableEvents = False
     End With
     
-    'SPECIFY LOCAL PATH OF MASTERLIST.XLSX FILE
-    masterListLocation = "C:\Users\YourName\Desktop\Excel-Macro-Example\MasterList.xlsx"
-                   
     'ASSIGN DATA WORKSHEET
+    Set dataWB = ActiveWorkbook
     Set dataWS = ActiveSheet
-    
-    'ASSIGN OUTPUT WORKSHEET
-    ActiveWorkbook.Worksheets.Add(After:=Worksheets(1)).Name = "output"
-    Set outputWS = ActiveWorkbook.Sheets("output")
-    
+      
     'OPEN THE MASTER LIST
     On Error Resume Next
             Set tempWB = Workbooks.Open(masterListLocation, True, True)
             Set tempWS = tempWB.Sheets("Sheet1")
             If tempWS Is Nothing Then
-                Call CloseAll
-            MsgBox "Cannot open Master List file", vbCritical
-                Exit Sub
+               MsgBox "Cannot open Master List file", vbCritical
+               Call CleanUp
+               Exit Sub
             End If
     On Error GoTo ErrHandler
     
+    'ASSIGN OUTPUT WORKSHEET
+    dataWB.Worksheets.Add(After:=Worksheets(1)).Name = "output"
+    Set outputWS = dataWB.Sheets("output")
+                         
     'ONLY COPY ROWS WITH DATA FROM MASTER LIST TO TEMP RANGE
     tempRNG = tempWS.Range(tempWS.Range("A1"), tempWS.Range("A1").End(xlDown)).Cells
     
@@ -47,7 +46,7 @@ Sub RunMacro()
     Set iInMasterRow = GetMasterRows(tempRNG)
     Set tempRNG = Nothing
     
-    'ITERATE THROUGH COLLECTION OF MASTER LIST ROW NUMBERS ONE BY ONE
+    'ITERATE THROUGH COLLECTION OF MASTER LIST ROWS
     Dim r As Integer
     If iInMasterRow.Count > 0 Then
         
@@ -61,16 +60,16 @@ Sub RunMacro()
                 firstName = ""
                 login = ""
                               
-                'GET LAST NAME FROM MASTER LIST ROW
+                'GET LAST NAME FROM MASTER LIST
                 lastName = Trim(tempWS.Cells(iInMasterRow(x), 1).Value)
                  
-                'GET FIRST NAME FROM MASTER LIST ROW
+                'GET FIRST NAME FROM MASTER LIST
                 firstName = Trim(tempWS.Cells(iInMasterRow(x), 2).Value)
                                  
-                'GET LOGIN FROM MASTER LIST ROW
+                'GET LOGIN FROM MASTER LIST
                 login = Trim(tempWS.Cells(iInMasterRow(x), 3).Value)
                                                        
-                'COPY COLUMN B OF DATA LIST SINCE IT CONTAINS LOGIN DATA
+                'COPY COLUMN B OF DATA LIST SINCE IT CONTAINS LOGIN DATA FOR MATCHING
                 dataWSCol = Range(dataWS.Range("B1"), dataWS.Range("B1").End(xlDown)).Cells
                 
                 'CREATE COLLECTION OF DATA LIST ROW NUMBERS THAT CONTAIN THE SAME LOGIN AS MASTER LIST ROW
@@ -78,7 +77,7 @@ Sub RunMacro()
                 Set dataWSCol = Nothing
                 
                 'ITERATE THROUGH COLLECTION OF DATA LIST ROW NUMBERS AND SUM UP VALUES FROM COLUMN C
-                If iInDataListRow.Count > 0 Then
+                If GetMatchingRows.Count > 0 Then
                 
                     countValue = 0
                                
@@ -129,27 +128,25 @@ Sub RunMacro()
     Set tempWS = Nothing
     Set tempWB = Nothing
     
-    With Application
-        .ScreenUpdating = True
-        .DisplayAlerts = True
-        .EnableEvents = True
-    End With
+    Call CleanUp
     
     MsgBox "File processed successfully. Please open sheet labelled output for totals."
     
     Exit Sub
     
 ErrHandler:
-        Call CloseAll
-        MsgBox "Unhandled Error, please contact Systems", vbCritical
-End Sub
-
-
-Sub CloseAll()
-        'CLOSE ALL OPEN WORKBOOKS ON ERROR
         If Not tempWB Is Nothing Then
             tempWB.Close False
         End If
+        If Not outputWS Is Nothing Then
+            outputWS.Delete
+        End If
+        MsgBox "Unhandled Error, please contact Systems", vbCritical
+        Call CleanUp
+        
+End Sub
+
+Sub CleanUp()
         Application.EnableEvents = True
         Application.ScreenUpdating = True
         Application.DisplayAlerts = True
@@ -176,4 +173,3 @@ Dim lb As Long, ub As Long, e As Long
             GetMasterRows.Add e
     Next e
 End Function
-
