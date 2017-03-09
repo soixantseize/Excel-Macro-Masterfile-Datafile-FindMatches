@@ -5,12 +5,12 @@ Sub RunMacro()
     On Error GoTo ErrHandler
  
     Dim tempWB As Workbook, dataWB As Workbook, rw As Range
-    Dim tempWS, dataWS, outputWS As Worksheet
-    Dim countValue, outputPrintRow As Long
-    Dim dataWSCol, tempRNG As Variant
-    Dim lastName, firstName, login As String
-    Dim iInMasterRow, iInDataListRow, PersonsMissing As Collection
-    Dim x, y, z As Integer
+    Dim tempWS As Worksheet, dataWS As Worksheet, outputWS As Worksheet
+    Dim countValue As Long, outputPrintRow As Long
+    Dim dataWSCol As Variant, tempRNG As Variant
+    Dim lastName As String, firstName As String, login As String
+    Dim iInMasterRow As Collection, iInDataListRow As Collection, PersonsMissing As Collection
+    Dim x As Integer, y As Integer, z As Integer
  
     Dim masterListLocation As String: masterListLocation = "C:\Users\YourName\Desktop\Excel-Macro-Example\MasterList.xlsx"
      
